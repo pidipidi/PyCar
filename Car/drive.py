@@ -24,32 +24,25 @@ def update_all(update_list):
 
 
 # make a plan
-traj = np.array([np.linspace(vehicle.rect.x, 750, 200),
-                 np.linspace(vehicle.rect.y, vehicle.rect.y, 200),
-                 np.linspace(vehicle.angle, vehicle.angle, 200)]).T
-print np.shape(traj)
+traj = np.array([np.random.normal(1,1.0,550),
+                 np.random.normal(0,1.0,550)])
+## traj = np.array([np.linspace(1.0, 1.0, 550),
+##                  np.linspace(0, 0, 550)])
 
-for i in xrange(len(traj)):
+for i in xrange(len(traj[0])):
     clock.tick(60)
-
-    vehicle.rect.x = traj[i][0]
-    vehicle.rect.y = traj[i][1]
-    vehicle.angle  = traj[i][2]
 
     ## to_update = [vehicle]
     to_display = [road, vehicle, vehicle1]
     to_text = [clock.get_fps(),
-               vehicle.angle,
-               vehicle.current_speed,
-               vehicle.move_x,
-               vehicle.move_y,
-               vehicle.rect.x,
-               vehicle.rect.y,
-               "F " + str(vehicle.forward),
-               "L " + str(vehicle.left),
-               "R " + str(vehicle.right)]
+               vehicle.x,
+               vehicle.y,
+               vehicle.theta,
+               vehicle.uv,
+               vehicle.ua]
 
-    ## update_all(to_update)
+    vehicle.move(u=(traj[0][i], traj[1][i]))
     display_all(main_s, to_display, to_text)
     pygame.display.flip()
+    print i
 

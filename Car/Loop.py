@@ -24,7 +24,7 @@ def update_all(update_list):
         element.update()
 
 
-data = {'pose':[], 'vehicle':[], 'solid_line':[], 'dash_line':[]}
+data = {'u':[], 'x':[], 'pose':[], 'vehicle':[], 'solid_line':[], 'dash_line':[]}
 
 running = True
 while running:
@@ -46,7 +46,11 @@ while running:
     if key[pygame.K_DOWN]:
         vehicle.backward = True
     if key[pygame.K_r]:
-        if len(data['pose'])>10:
+        data = {'u':[], 'x':[], 'vehicle':[], 'solid_line':[], 'dash_line':[]}
+        vehicle  = Car(250, random.choice([height/2+40, height/2-20]))
+        vehicle1 = Car(width/2+random.randint(-100,100), random.choice([height/2+40, height/2-20]))        
+    if key[pygame.K_s]:
+        if len(data['x'])>10:
             mypath = './'
             onlyfiles = [f for f in os.listdir(mypath) if os.path.isfile(os.path.join(mypath, f))]
             max_count = 0
@@ -55,7 +59,7 @@ while running:
                 count = int(f.split("_")[1].split(".")[0])
                 if max_count < count: max_count = count
             pickle.dump( data, open( "save_"+str(max_count+1)+".pkl", "wb" ) )
-            data = {'pose':[], 'vehicle':[], 'solid_line':[], 'dash_line':[]}
+            data = {'u':[], 'x':[], 'vehicle':[], 'solid_line':[], 'dash_line':[]}
             print "Saved a pickle: save_"+str(max_count+1)+".pkl"
 
         vehicle  = Car(250, random.choice([height/2+40, height/2-20]))
@@ -65,12 +69,11 @@ while running:
     to_update = [vehicle]
     to_display = [road, vehicle, vehicle1]
     to_text = [clock.get_fps(),
-               vehicle.angle,
-               vehicle.current_speed,
-               vehicle.move_x,
-               vehicle.move_y,
-               vehicle.rect.x,
-               vehicle.rect.y,
+               vehicle.x,
+               vehicle.y,
+               vehicle.theta,
+               vehicle.uv,
+               vehicle.ua,
                "F " + str(vehicle.forward),
                "L " + str(vehicle.left),
                "R " + str(vehicle.right)]
@@ -80,11 +83,11 @@ while running:
     pygame.display.flip()
 
 
-    data['pose'].append([vehicle.rect.x, vehicle.rect.y, vehicle.angle])
-    data['vehicle'].append([vehicle1.rect.x-vehicle.rect.x,
-                            vehicle1.rect.y-vehicle.rect.y,
-                            vehicle1.angle-vehicle.angle])
-    data['solid_line'] += road.relative_pose_from_solid_line(vehicle.rect.x, vehicle.rect.y, vehicle.angle)
-    data['dash_line'].append(road.relative_pose_from_dash_line(vehicle.rect.x, vehicle.rect.y, vehicle.angle))
-    
-    ## data.append([vehicle.rect.x, vehicle.rect.y, vehicle.angle])
+    data['u'].append([vehicle.uv, vehicle.ua])
+    data['x'].append([vehicle.x, vehicle.y, vehicle.theta])
+    data['vehicle'].append([vehicle.x-vehicle1.x,
+                            vehicle.y-vehicle1.y,
+                            vehicle.theta-vehicle1.theta])
+    data['solid_line'] += road.relative_pose_from_solid_line(vehicle.x, vehicle.y, vehicle.theta)
+    data['dash_line'].append(road.relative_pose_from_dash_line(vehicle.x, vehicle.y, vehicle.theta))
+

@@ -19,12 +19,12 @@ class Road:
 
     def relative_pose_from_solid_line(self, x, y, ang):
         d = []
-        d.append([0, self.rect.y-y, 90.-ang])
-        d.append([0, self.rect.y+130-y, 90.-ang])
+        d.append([0, y-self.rect.y, ang-90.])
+        d.append([0, y-(self.rect.y+130), ang-90.])
         return d
 
     def relative_pose_from_dash_line(self, x, y, ang):
-        return [0, self.rect.y+60-y, 90.-ang]
+        return [0, y-(self.rect.y+60), ang-90.]
     
 
     def display(self, main_surface):
